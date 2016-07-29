@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Bike</string>
+    <string name="loginFirstName">First Name</string>
+    <string name="loginLastName">Last Name</string>
+    <string name="loginEmail">Email</string>
+    <string name="loginPassword">Password</string>
+    <string-array name="loginCollegeChoices">
+        <item>wrc</item>
+        <item>don\'t pick me</item>
+        <item>ew jones</item>
+    </string-array>
+    <string name="loginCreateButtonLabel">Create</string>
+    <string name="auth_failed">The account creation failed</string>
+</resources>

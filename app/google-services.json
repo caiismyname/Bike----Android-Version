@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "414787462546",
+    "firebase_url": "https://bike-v1.firebaseio.com",
+    "project_id": "bike-v1",
+    "storage_bucket": "bike-v1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414787462546:android:318b52ccd2cd2deb",
+        "android_client_info": {
+          "package_name": "com.example.bike"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "414787462546-0cp0l6ujik8f86i5o7t402k9u512ol5s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0YzBh2vgNDJWgbXq5CEfjw875EPGi6As"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
