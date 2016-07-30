@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.onesignal.OneSignal;
 
 public class LoginActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -40,6 +41,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        OneSignal.startInit(this).init();
 
         mCreateButton = (Button)  findViewById(R.id.createAccountButton);
         mFirstNameField = (EditText) findViewById(R.id.firstNameField);
@@ -94,8 +96,21 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     public void createFBDBEntry() {
+        // Get OneSignal UserID
+        final String[] oneSignalUserId = new String[1];
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                Log.d("debug", "User:" + userId);
+                oneSignalUserId[0] = userId;
+                if (registrationId != null)
+                    Log.d("debug", "registrationId:" + registrationId);
+            }
+        });
+
+
         // Create userClass object
-        userClass thisUser = new userClass(mFirstNameField.getText().toString(), mLastNameField.getText().toString(), collegeValue, mEmailField.getText().toString());
+        userClass thisUser = new userClass(mFirstNameField.getText().toString(), mLastNameField.getText().toString(), collegeValue, mEmailField.getText().toString(), oneSignalUserId[0]);
 
         // Database Init
         FirebaseDatabase database = FirebaseDatabase.getInstance();
