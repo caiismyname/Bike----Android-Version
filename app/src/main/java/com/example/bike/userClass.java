@@ -15,13 +15,13 @@ public class userClass {
     public String bikeName;
     public String oneSignalUserId;
 
-    public userClass(String firstName, String lastName, String college, String email, String oneSignalUserId) {
+    public userClass(String firstName, String lastName, String college, String email, String oneSignalUserId, String bikeName) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.college = college;
         this.userName = college + firstName + lastName;
         this.email = email;
-        this.bikeName = "none";
+        this.bikeName = bikeName;
         this.oneSignalUserId = oneSignalUserId;
     }
 }

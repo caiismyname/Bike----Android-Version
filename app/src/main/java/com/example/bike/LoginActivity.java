@@ -1,5 +1,6 @@
 package com.example.bike;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
@@ -75,6 +76,8 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     public void createFirebaseAccount(View view) {
+        // This is the function that is associated with the "Create Account" button
+
         mAuth.createUserWithEmailAndPassword(mEmailField.getText().toString(), mPasswordField.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -90,6 +93,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                         }
                         else {
                             createFBDBEntry();
+                            transitionToMain();
                         }
                     }
                 });
@@ -110,7 +114,8 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
 
         // Create userClass object
-        userClass thisUser = new userClass(mFirstNameField.getText().toString(), mLastNameField.getText().toString(), collegeValue, mEmailField.getText().toString(), oneSignalUserId[0]);
+        userClass thisUser = new userClass(mFirstNameField.getText().toString(), mLastNameField.getText().toString(), collegeValue, mEmailField.getText().toString(), oneSignalUserId[0], "none");
+
 
         // Database Init
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -121,12 +126,12 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         userRef.child("college").setValue(thisUser.college);
         userRef.child("completedwo").child("init").setValue(true); // Hardcoded here b/c not kept locally
         userRef.child("email").setValue(thisUser.email);
-        userRef.child("name").setValue(thisUser.firstName + thisUser.lastName);
+        userRef.child("name").setValue(thisUser.firstName + " " + thisUser.lastName);
         userRef.child("oneSignalUserId").setValue(thisUser.oneSignalUserId);
 
         //Second DB entry, colleges/[college]/users
-        DatabaseReference teamRef = database.getReference("college/" + thisUser.college + "/users/" + thisUser.userName);
-        teamRef.setValue(true);
+        DatabaseReference teamRef = database.getReference("colleges/" + thisUser.college + "/users");
+        teamRef.child(thisUser.userName).setValue(true);
 
         //Save thisUser
         saveUser(thisUser);
@@ -138,15 +143,20 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = pref.edit();
 
-        editor.putString("username", userToSave.userName);
         editor.putString("firstName", userToSave.firstName);
         editor.putString("lastName", userToSave.lastName);
         editor.putString("college", userToSave.college);
-        editor.putString("bike", userToSave.bikeName);
+        editor.putString("email", userToSave.email);
         editor.putString("oneSignalUserId", userToSave.oneSignalUserId);
+        editor.putString("bike", userToSave.bikeName);
 
         Boolean saveStatus = editor.commit();
-        Log.v ("BIKE", "User has been saved: " + saveStatus);
+        Log.d ("BIKE", "User has been saved: " + saveStatus);
+    }
+
+    public void transitionToMain() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     @Override
