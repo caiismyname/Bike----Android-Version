@@ -1,10 +1,13 @@
 package com.example.bike;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.onesignal.OneSignal;
@@ -13,28 +16,44 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    userClass thisUser;
-    TextView mDisplayName;
+    public static userClass thisUser;
+    private TextView mDisplayName;
+    private Button mWorkoutsButton;
+    private Button mBikesButton;
+    private Button mGoRideButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d ("ONCREATE", "ONCREATE");
         setContentView(R.layout.activity_main);
 
-
         mDisplayName = (TextView) findViewById(R.id.displayName);
+        mWorkoutsButton = (Button) findViewById(R.id.workoutsButton);
+        mBikesButton = (Button) findViewById(R.id.bikesButton);
+        mGoRideButton = (Button) findViewById(R.id.goRideButton);
     }
 
     @Override
     protected  void onStart() {
         super.onStart();
-        Log.d ("ONSTART", "onstart");
-        OneSignal.startInit(this).init();
 
-        loadUser();
-        Log.v ("MainActivity name field", thisUser.firstName);
-        mDisplayName.setText(thisUser.firstName);
+        // Retrieve our hasAccount flag to trigger (or not) LoginActivity
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean hasAccount = prefs.getBoolean("hasAccount", false);
+
+        // Logic to trigger LoginActivity
+        if (hasAccount) {
+            // Has account. Do normal stuff
+            OneSignal.startInit(this).init();
+            loadUser();
+            mDisplayName.setText(thisUser.firstName);
+        }
+        else {
+            // Does not have account
+            Intent transitionToLoginActivity = new Intent(this, LoginActivity.class);
+            startActivity(transitionToLoginActivity);
+        }
+
     }
 
     public void loadUser() {
@@ -51,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
         thisUser = new userClass(firstName, lastName, college, email, oneSignalUserId, bike);
         Log.d ("LOAD USER", "USER LOADED");
-        Log.d("FIRST NAME", "loaded user first name" + firstName);
+    }
+
+    public void transitionToWorkouts(View view) {
+        Intent transitionToWorkouts = new Intent(this, WorkoutListActivity.class);
+        startActivity(transitionToWorkouts);
     }
 }

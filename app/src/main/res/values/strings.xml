@@ -13,4 +13,9 @@
     <string name="auth_failed">The account creation failed</string>
 
 
+    <string name="workoutsButtonLabel">Workouts</string>
+    <string name="bikesButtonLabel">Bikes</string>
+    <string name="goRideButtonLabel">Go Ride</string>
+    <string name="title_workout_list">Workouts</string>
+    <string name="title_workout_detail">Workout Detail</string>
 </resources>

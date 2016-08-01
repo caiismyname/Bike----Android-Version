@@ -11,8 +11,8 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        manifestPlaceholders = [manifestApplicationId: "come.example.bike",
-                                onesignal_app_id: "0d103f19-b6e5-4da9-9864-8ae146104c88",
+        manifestPlaceholders = [manifestApplicationId          : "come.example.bike",
+                                onesignal_app_id               : "0d103f19-b6e5-4da9-9864-8ae146104c88",
                                 onesignal_google_project_number: "414787462546"]
     }
     buildTypes {
@@ -25,7 +25,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
+    //compile 'com.google.android.gms:play-services-gcm:+'
+    //compile 'com.google.android.gms:play-services-analytics:+'
+    //compile "com.google.android.gms:play-services-location:+"
     compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.google.firebase:firebase-core:9.2.1'
     compile 'com.google.firebase:firebase-database:9.2.1'
@@ -34,9 +36,11 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.2.1'
     compile 'com.onesignal:OneSignal:2.+@aar'
     compile 'com.android.support:multidex:1.0.1'
-    //compile 'com.google.android.gms:play-services-gcm:+'
-    //compile 'com.google.android.gms:play-services-analytics:+'
-    //compile "com.google.android.gms:play-services-location:+"
+    compile 'com.android.support:support-v4:24.1.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    testCompile 'junit:junit:4.12'
 }
+
 
 apply plugin: 'com.google.gms.google-services'

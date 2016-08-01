@@ -69,10 +69,14 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                     // User is signed out
                     Log.d("BIKE", "onAuthStateChanged:signed_out");
                 }
-                // ...
             }
         };
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     public void createFirebaseAccount(View view) {
@@ -112,10 +116,8 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
             }
         });
 
-
         // Create userClass object
         userClass thisUser = new userClass(mFirstNameField.getText().toString(), mLastNameField.getText().toString(), collegeValue, mEmailField.getText().toString(), oneSignalUserId[0], "none");
-
 
         // Database Init
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -136,6 +138,9 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
         //Save thisUser
         saveUser(thisUser);
 
+        //Set a value in DefaultSharedPrefs so it is known that the user has created an account
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean("hasAccount", true).apply();
     }
 
     public void saveUser(userClass userToSave) {
@@ -157,12 +162,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     public void transitionToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        LoginActivity.this.finish();
     }
 
     @Override
