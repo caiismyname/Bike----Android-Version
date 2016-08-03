@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.text.Text;
@@ -25,24 +26,31 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.bike.MainActivity.thisUser;
+
 
 public class WorkoutDetailActivity extends AppCompatActivity {
 
     private workoutClass mThisWorkout;
     private DatabaseReference mDatabase;
-    private String workoutUsername;
     private TextView mPayloadView;
+    private Button completionButton;
+    private Boolean thisUserHasCompleted;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("WO DEtail Activity", "detail activity oncreate");
+        Log.d("WorkoutDetailActivity", "detail activity oncreate");
 
         super.onCreate(savedInstanceState);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        // Grabbing resources
         setContentView(R.layout.activity_workout_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         mPayloadView = (TextView) findViewById(R.id.workout_detail_payload_textfield);
+        completionButton = (Button) findViewById(R.id.toggleWorkoutCompletionButton);
 
 
         // Show the Up button in the action bar.
@@ -51,59 +59,62 @@ public class WorkoutDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
         // Getting mThisWorkout from intent
         Bundle b = getIntent().getExtras();
         mThisWorkout = b.getParcelable("selectedWorkout");
 
-        //loadWorkout();
-
+        // Setting texts
         toolbar.setTitle(mThisWorkout.type);
-        mPayloadView.setText(mThisWorkout.getUsersHaveCompletedString());
+        //mPayloadView.setText(mThisWorkout.getUsersHaveCompletedString());
+        thisUserHasCompleted = mThisWorkout.usersHaveCompletedList.contains(thisUser.userName);
+        //setButtonText();
+        reloadData();
 
-
-
-
-        /**
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
-        if (savedInstanceState == null) {
-
-            Log.d("WorkoutDetailActivity", "---------------------- saved instance state == null");
-
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(WorkoutDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(WorkoutDetailFragment.ARG_ITEM_ID));
-            WorkoutDetailFragment fragment = new WorkoutDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.workout_detail_container, fragment)
-                    .commit();
-        }
-         */
     }
 
-    public void loadWorkout() {
+    public void completionButton(View view) {
+        Log.d("WorkoutDetailView", "completion Button Clicked");
 
-        Log.d("workoutDetailActivity", "loadWorkout");
+        startWorkoutListener();
 
-        DatabaseReference workoutRef = mDatabase.child("colleges/" + MainActivity.thisUser.college + "/workouts/" + workoutUsername);
-        final List<workoutClass> workoutContainer = new ArrayList<workoutClass>();
+        DatabaseReference workoutRef = mDatabase.child("colleges/" + thisUser.college + "/workouts/" + mThisWorkout.getWorkoutName() + "/usersHaveCompleted/" + thisUser.userName);
+        if (thisUserHasCompleted) {
+            workoutRef.removeValue();
+        }
+        else {
+            workoutRef.setValue(true);
+        }
+    }
+
+    public void reloadData() {
+        setButtonText();
+        mPayloadView.setText(mThisWorkout.getUsersHaveCompletedString());
+    }
+
+    public void setButtonText() {
+        thisUserHasCompleted = mThisWorkout.usersHaveCompletedList.contains(thisUser.userName);
+
+        if (thisUserHasCompleted) {
+            completionButton.setText("Incomplete");
+        }
+        else {
+            completionButton.setText("Complete");
+        }
+    }
+
+    public void startWorkoutListener() {
+        Log.d("workoutDetailActivity", "startWorkoutListener");
+
+        DatabaseReference workoutRef = mDatabase.child("colleges/" + thisUser.college + "/workouts/" + mThisWorkout.getWorkoutName());
         ValueEventListener workoutListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("workoutDetailActivity", "onDataChange");
                 mThisWorkout = dataSnapshot.getValue(workoutClass.class);
-                Log.d("workoutDetailActivity", "loadWorkout -- " + mThisWorkout.getWeekDate());
+                mThisWorkout.setWorkoutName(dataSnapshot.getKey().toString());
+                mThisWorkout.setUsersHaveCompletedList();
+
+                reloadData();
             }
 
             @Override
@@ -111,8 +122,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
                 Log.e("FBDB ERROR", databaseError.toString());
             }
         };
-
-        workoutRef.addListenerForSingleValueEvent(workoutListener);
+        workoutRef.addValueEventListener(workoutListener);
     }
 
     @Override

@@ -84,10 +84,15 @@ public class workoutClass implements Parcelable {
     public void setUsersHaveCompletedList() {
         for (String user: this.usersHaveCompleted.keySet()) {
             if (user.equals("init") == false) {
-                Log.d("setUSersHaveComplete", "username " + user);
                 this.usersHaveCompletedList.add(user);
             }
         }
+    }
+
+    // Constructing an object out of the FB data directly will not give us the
+    // FB key for the data. This manually fixes it.
+    public void setWorkoutName(String workoutName){
+        this.workoutName = workoutName;
     }
 
 

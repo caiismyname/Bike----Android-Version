@@ -40,7 +40,7 @@ import java.util.List;
 public class WorkoutListActivity extends AppCompatActivity {
 
 
-    private List<workoutClass> initWorkoutList;
+    private List<workoutClass> initWorkoutList = new ArrayList<>();
     private RecyclerView recyclerView; // Is defined here to allow access to it's adapter in the getWorkoutsList method
     private DatabaseReference mDatabase;
 
@@ -65,7 +65,7 @@ public class WorkoutListActivity extends AppCompatActivity {
     }
 
     public List<workoutClass> getWorkoutsList() {
-        Log.d("Bike", "get workouts List");
+        Log.d("Bike", "getWorkoutsList");
         final List<workoutClass> workoutList = new ArrayList<workoutClass>();
         DatabaseReference workoutListRef = mDatabase.child("colleges/" + MainActivity.thisUser.college + "/workouts");
 
@@ -76,6 +76,7 @@ public class WorkoutListActivity extends AppCompatActivity {
                 for (DataSnapshot child : children) {
                     workoutClass currentWorkout = child.getValue(workoutClass.class);
                     currentWorkout.setUsersHaveCompletedList(); // Called to prepare usersHaveCompletedList, b/c parcelable can't pass maps
+                    currentWorkout.setWorkoutName(child.getKey().toString());
                     workoutList.add(currentWorkout);
                 }
 
@@ -113,7 +114,7 @@ public class WorkoutListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-            Log.d("WOList Activity", "onbindViewHolder");
+            Log.d("WorkoutListActivity", "onbindViewHolder");
 
             //holder.mItem = mValues.get(position).getWorkoutName();
             holder.mIdView.setText(mValues.get(position).getWeekDate());
