@@ -1,39 +1,49 @@
 package com.example.bike;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import android.widget.TextView;
 
-/**
- * An activity representing a single Workout detail screen. This
- * activity is only used narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link WorkoutListActivity}.
- */
+import com.google.android.gms.vision.text.Text;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class WorkoutDetailActivity extends AppCompatActivity {
+
+    private workoutClass mThisWorkout;
+    private DatabaseReference mDatabase;
+    private String workoutUsername;
+    private TextView mPayloadView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("WO DEtail Activity", "detail activity oncreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
+        mPayloadView = (TextView) findViewById(R.id.workout_detail_payload_textfield);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -41,6 +51,21 @@ public class WorkoutDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        // Getting mThisWorkout from intent
+        Bundle b = getIntent().getExtras();
+        mThisWorkout = b.getParcelable("selectedWorkout");
+
+        //loadWorkout();
+
+        toolbar.setTitle(mThisWorkout.type);
+        mPayloadView.setText(mThisWorkout.getUsersHaveCompletedString());
+
+
+
+
+        /**
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).
@@ -51,6 +76,9 @@ public class WorkoutDetailActivity extends AppCompatActivity {
         // http://developer.android.com/guide/components/fragments.html
         //
         if (savedInstanceState == null) {
+
+            Log.d("WorkoutDetailActivity", "---------------------- saved instance state == null");
+
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
@@ -62,10 +90,34 @@ public class WorkoutDetailActivity extends AppCompatActivity {
                     .add(R.id.workout_detail_container, fragment)
                     .commit();
         }
+         */
+    }
+
+    public void loadWorkout() {
+
+        Log.d("workoutDetailActivity", "loadWorkout");
+
+        DatabaseReference workoutRef = mDatabase.child("colleges/" + MainActivity.thisUser.college + "/workouts/" + workoutUsername);
+        final List<workoutClass> workoutContainer = new ArrayList<workoutClass>();
+        ValueEventListener workoutListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mThisWorkout = dataSnapshot.getValue(workoutClass.class);
+                Log.d("workoutDetailActivity", "loadWorkout -- " + mThisWorkout.getWeekDate());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("FBDB ERROR", databaseError.toString());
+            }
+        };
+
+        workoutRef.addListenerForSingleValueEvent(workoutListener);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("WorkoutDetailActivity", "---------------------- onOptionsitemSelected");
         int id = item.getItemId();
         if (id == android.R.id.home) {
             // This ID represents the Home or Up button. In the case of this

@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import com.example.bike.dummy.DummyContent;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,13 +39,9 @@ import java.util.List;
  */
 public class WorkoutListActivity extends AppCompatActivity {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
-    private List<String> initWorkoutList;
-    private RecyclerView recyclerView;
+
+    private List<workoutClass> initWorkoutList;
+    private RecyclerView recyclerView; // Is defined here to allow access to it's adapter in the getWorkoutsList method
     private DatabaseReference mDatabase;
 
     @Override
@@ -66,22 +61,12 @@ public class WorkoutListActivity extends AppCompatActivity {
         assert recyclerView != null;
         RecyclerView.Adapter mAdapter = new SimpleItemRecyclerViewAdapter(initWorkoutList);
         recyclerView.setAdapter(mAdapter);
-        //setupRecyclerView((RecyclerView) recyclerView);
-
-
-        if (findViewById(R.id.workout_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
 
     }
 
-    public List<String> getWorkoutsList() {
+    public List<workoutClass> getWorkoutsList() {
         Log.d("Bike", "get workouts List");
-        final List<String> workoutList = new ArrayList<String>();
+        final List<workoutClass> workoutList = new ArrayList<workoutClass>();
         DatabaseReference workoutListRef = mDatabase.child("colleges/" + MainActivity.thisUser.college + "/workouts");
 
         ValueEventListener workoutsListener = new ValueEventListener() {
@@ -89,11 +74,12 @@ public class WorkoutListActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                 for (DataSnapshot child : children) {
-                    String workoutName = child.getKey().toString();
-                    workoutList.add(workoutName);
-                    Log.d("Workout", "workout username " + workoutName);
+                    workoutClass currentWorkout = child.getValue(workoutClass.class);
+                    currentWorkout.setUsersHaveCompletedList(); // Called to prepare usersHaveCompletedList, b/c parcelable can't pass maps
+                    workoutList.add(currentWorkout);
                 }
 
+                // Refresh List to display info
                 recyclerView.getAdapter().notifyDataSetChanged();
             }
 
@@ -106,17 +92,14 @@ public class WorkoutListActivity extends AppCompatActivity {
         return workoutList;
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(initWorkoutList));
 
-    }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<String> mValues;
+        private final List<workoutClass> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<String> items) {
+        public SimpleItemRecyclerViewAdapter(List<workoutClass> items) {
             mValues = items;
         }
 
@@ -128,29 +111,31 @@ public class WorkoutListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position));
-            holder.mContentView.setText(mValues.get(position));
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
+
+            Log.d("WOList Activity", "onbindViewHolder");
+
+            //holder.mItem = mValues.get(position).getWorkoutName();
+            holder.mIdView.setText(mValues.get(position).getWeekDate());
+            holder.mContentView.setText(mValues.get(position).getType());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(WorkoutDetailFragment.ARG_ITEM_ID, holder.mItem);
-                        WorkoutDetailFragment fragment = new WorkoutDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.workout_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, WorkoutDetailActivity.class);
-                        intent.putExtra(WorkoutDetailFragment.ARG_ITEM_ID, holder.mItem);
 
-                        context.startActivity(intent);
-                    }
+                    Log.d("WOList Activity", "onClick");
+
+                    // Intent to transition to workoutDetailActivity
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, WorkoutDetailActivity.class);
+
+                    // Bundle that contains the selected workout, as a workoutClass object
+                    Bundle b = new Bundle();
+                    b.putParcelable("selectedWorkout", mValues.get(position));
+                    intent.putExtras(b);
+
+                    context.startActivity(intent);
+
                 }
             });
         }
