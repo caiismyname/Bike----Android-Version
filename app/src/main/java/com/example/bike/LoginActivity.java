@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
 
         //Second DB entry, colleges/[college]/users
         DatabaseReference teamRef = database.getReference("colleges/" + thisUser.college + "/users");
-        teamRef.child(thisUser.userName).setValue(true);
+        teamRef.child(thisUser.userName).setValue(thisUser.oneSignalUserId);
 
         //Save thisUser
         saveUser(thisUser);

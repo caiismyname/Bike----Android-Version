@@ -22,4 +22,14 @@
     <string name="workoutIncompleteButton">Incomplete</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="nowButton">Now</string>
+    <string name="tenMinutesButton">10</string>
+    <string name="thirtyMinutesButton">30</string>
+    <string name="sixtyMinutesButton">60</string>
+    <string name="atTimeButton">At time</string>
+    <string name="goRideSendButton">Go Ride!</string>
+    <string name="in">In</string>
+    <string name="minutes">minutes.</string>
+
 </resources>

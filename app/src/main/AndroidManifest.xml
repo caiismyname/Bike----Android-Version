@@ -52,6 +52,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.bike.WorkoutListActivity" />
         </activity>
+        <activity android:name=".goRideActivity"></activity>
     </application>
 
 </manifest>

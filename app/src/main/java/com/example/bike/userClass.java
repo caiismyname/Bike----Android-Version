@@ -14,6 +14,7 @@ public class userClass {
     public String email;
     public String bikeName;
     public String oneSignalUserId;
+    public String fullName;
 
     public userClass(String firstName, String lastName, String college, String email, String oneSignalUserId, String bikeName) {
         this.firstName = firstName;
@@ -23,5 +24,6 @@ public class userClass {
         this.email = email;
         this.bikeName = bikeName;
         this.oneSignalUserId = oneSignalUserId;
+        this.fullName = firstName + " " + lastName;
     }
 }

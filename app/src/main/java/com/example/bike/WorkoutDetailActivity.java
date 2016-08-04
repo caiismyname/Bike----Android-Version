@@ -65,9 +65,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
 
         // Setting texts
         toolbar.setTitle(mThisWorkout.type);
-        //mPayloadView.setText(mThisWorkout.getUsersHaveCompletedString());
         thisUserHasCompleted = mThisWorkout.usersHaveCompletedList.contains(thisUser.userName);
-        //setButtonText();
         reloadData();
 
     }
@@ -109,7 +107,6 @@ public class WorkoutDetailActivity extends AppCompatActivity {
         ValueEventListener workoutListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("workoutDetailActivity", "onDataChange");
                 mThisWorkout = dataSnapshot.getValue(workoutClass.class);
                 mThisWorkout.setWorkoutName(dataSnapshot.getKey().toString());
                 mThisWorkout.setUsersHaveCompletedList();
