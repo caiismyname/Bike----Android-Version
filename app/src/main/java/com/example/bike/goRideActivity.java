@@ -69,6 +69,14 @@ public class goRideActivity extends AppCompatActivity {
 
     }
 
+    public void resetButtonColors() {
+        mNowButton.setBackgroundColor(Color.LTGRAY);
+        mTenMinutesButton.setBackgroundColor(Color.LTGRAY);
+        mThrityMinutesButton.setBackgroundColor(Color.LTGRAY);
+        mSixtyMinuteButton.setBackgroundColor(Color.LTGRAY);
+        mAtTimeButton.setBackgroundColor(Color.LTGRAY);
+    }
+
     public void getTeammates(final List<String> messages, final List<String> times){
         DatabaseReference teammatesRef = mDatabase.child("colleges/" + thisUser.college + "/users");
 
@@ -77,15 +85,16 @@ public class goRideActivity extends AppCompatActivity {
         ValueEventListener teammatesListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int maxIndex = (int) dataSnapshot.getChildrenCount();
-                int index = 1;
+                Long maxIndex = (Long) dataSnapshot.getChildrenCount();
+                Long index = 0L;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     if (child.getKey().equals(thisUser.userName) == false) {
                         listOfTeammates.add("'" + child.getValue().toString() + "'");
                     }
                     index += 1;
 
-                    if (index > maxIndex) {
+                    if (index.equals(maxIndex)) {
+                        Log.d("goRideActivity", "equaled max");
                         postNotification(listOfTeammates, messages, times);
                     }
                 }
@@ -99,14 +108,6 @@ public class goRideActivity extends AppCompatActivity {
 
         teammatesRef.addListenerForSingleValueEvent(teammatesListener);
 
-    }
-
-    public void resetButtonColors() {
-        mNowButton.setBackgroundColor(Color.LTGRAY);
-        mTenMinutesButton.setBackgroundColor(Color.LTGRAY);
-        mThrityMinutesButton.setBackgroundColor(Color.LTGRAY);
-        mSixtyMinuteButton.setBackgroundColor(Color.LTGRAY);
-        mAtTimeButton.setBackgroundColor(Color.LTGRAY);
     }
 
     public void setModifier(View view){
@@ -181,9 +182,10 @@ public class goRideActivity extends AppCompatActivity {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
         String isoDate = "";
 
+
         // Initial notification
         now.add(Calendar.SECOND, 10);
-        listOfTimes.add(now.getTime().toString());
+        listOfTimes.add(formatter.format(now.getTime()));
 
         // Future notificaion
         if (modifier.intValue() >= 30){
@@ -191,7 +193,6 @@ public class goRideActivity extends AppCompatActivity {
             listOfTimes.add(now.getTime().toString());
 
             isoDate = formatter.format(now.getTime());
-
         }
         else if (modifier.intValue() < 0){
             if (atTimeHour.intValue() <= nowHour) {
@@ -202,11 +203,15 @@ public class goRideActivity extends AppCompatActivity {
             listOfTimes.add(now.getTime().toString());
 
             isoDate = formatter.format(now.getTime());
-
         }
 
         Log.d("getNotificationTimes", listOfTimes.toString());
-        setAnnouncements(isoDate);
+        if (isoDate.equals("") == false) {
+            // isoDate is only set if the ride is >30 min from now.
+            // The announcement only needs to be made if the ride is >30 min from now.
+            // Hence this check.
+            setAnnouncements(isoDate);
+        }
         return listOfTimes;
     }
 
@@ -243,11 +248,11 @@ public class goRideActivity extends AppCompatActivity {
     }
 
     public void postNotification(List<String> userIds, List<String> listOfMessages, List<String> listOfNotificationTimes) {
-        Integer maxIndex = listOfMessages.size();
-        for (Integer index = 0 ; index.intValue() < maxIndex.intValue() ; index += 1) {
+        if (modifier.equals(0) || modifier.equals(10)) {
             try {
-                Log.d("userIds", userIds.toString());
-                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + listOfMessages.get(index) + " '}, 'include_player_ids': " + userIds.toString() + ", 'send_after': '" + listOfNotificationTimes.get(index) + "', 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'goingOnRide'}}"),
+                Log.d("goRideActivity", "posting immediate notification");
+                Log.d("asdfasdf", "asdf " + userIds.toString());
+                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + listOfMessages.get(0) + " '}, 'include_player_ids': " + userIds.toString() + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'goingOnRide'}}"),
                         new OneSignal.PostNotificationResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject response) {
@@ -261,6 +266,27 @@ public class goRideActivity extends AppCompatActivity {
                         });
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        } else {
+            Integer maxIndex = listOfMessages.size();
+            for (Integer index = 0; index.intValue() < maxIndex.intValue(); index += 1) {
+                try {
+                    Log.d("goRideActivity", "posting delayed notifications");
+                    OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + listOfMessages.get(index) + " '}, 'include_player_ids': " + userIds.toString() + ", 'send_after': '" + listOfNotificationTimes.get(index) + "', 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'goingOnRide'}}"),
+                            new OneSignal.PostNotificationResponseHandler() {
+                                @Override
+                                public void onSuccess(JSONObject response) {
+                                    Log.i("OneSignalExample", "postNotification Success: " + response.toString());
+                                }
+
+                                @Override
+                                public void onFailure(JSONObject response) {
+                                    Log.e("OneSignalExample", "postNotification Failure: " + response.toString());
+                                }
+                            });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

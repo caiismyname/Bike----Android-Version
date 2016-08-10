@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static userClass thisUser;
     private TextView mDisplayName;
+    private Button mAnnouncementsButton;
     private Button mWorkoutsButton;
     private Button mBikesButton;
     private Button mGoRideButton;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mDisplayName = (TextView) findViewById(R.id.displayName);
+        mAnnouncementsButton = (Button) findViewById(R.id.announcementsButton);
         mWorkoutsButton = (Button) findViewById(R.id.workoutsButton);
         mBikesButton = (Button) findViewById(R.id.bikesButton);
         mGoRideButton = (Button) findViewById(R.id.goRideButton);
@@ -70,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
 
         thisUser = new userClass(firstName, lastName, college, email, oneSignalUserId, bike);
         Log.d ("LOAD USER", "USER LOADED");
+    }
+
+    public void transitionToAnnouncements(View view){
+        Intent transitionToAnnouncements = new Intent(this, announcementsActivity.class);
+        startActivity(transitionToAnnouncements);
     }
 
     public void transitionToWorkouts(View view) {

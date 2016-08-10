@@ -7,6 +7,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.onesignal.OSNotificationAction;
+import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
 
 import org.json.JSONException;
@@ -29,28 +31,29 @@ public class BikeApplication extends Application {
         super.onCreate();
         Log.d("bikeapplication", "onCreate");
         OneSignal.startInit(this)
-                .setNotificationOpenedHandler(new MyNotificationOpenedHandler())
                 .init();
-
-        OneSignal.enableNotificationsWhenActive(false);
-        OneSignal.enableInAppAlertNotification(false);
 
     }
 
     // This fires when a notification is opened by tapping on it or one is received while the app is running.
     private class MyNotificationOpenedHandler implements OneSignal.NotificationOpenedHandler {
         @Override
-        public void notificationOpened(String message, JSONObject additionalData, boolean isActive) {
+        public void notificationOpened(OSNotificationOpenResult result) {
+
+            OSNotificationAction.ActionType actionType = result.action.actionType;
+            JSONObject data = result.notification.payload.additionalData;
+
             String messageTitle;
+            String messageBody = result.notification.payload.body;
             AlertDialog.Builder builder = null;
 
-            if (isActive) {// If a push notification is received when the app is being used it does not display in the notification bar so display in the app.
+            if (result.notification.isAppInFocus) {// If a push notification is received when the app is being used it does not display in the notification bar so display in the app.
                 Log.d("bikeApplication", "isActive");
                 String notificationType = "";
                 String senderId = "";
                 try {
-                    notificationType = additionalData.getString("notificationType");
-                    senderId = additionalData.getString("senderOneSignalUserId");
+                    notificationType = data.getString("notificationType");
+                    senderId = data.getString("senderOneSignalUserId");
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -60,7 +63,7 @@ public class BikeApplication extends Application {
                     final String finalSenderId = senderId;
                     builder = new AlertDialog.Builder(BikeApplication.this)
                             .setTitle("A teammate is riding!")
-                            .setMessage(message + "\n Would you like to join them?");
+                            .setMessage( messageBody + "\n Would you like to join them?");
 
                     if (builder != null) {
                         Log.d("bikeApplication", "builder not null");

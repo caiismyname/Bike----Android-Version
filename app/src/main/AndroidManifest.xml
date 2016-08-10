@@ -3,7 +3,7 @@
     package="com.example.bike">
 
     <application
-        android:name="com.example.bike.BikeApplication"
+        android:name=".BikeApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -52,7 +52,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.bike.WorkoutListActivity" />
         </activity>
-        <activity android:name=".goRideActivity"></activity>
+        <activity android:name=".goRideActivity" />
+        <activity android:name=".announcementsActivity"></activity>
     </application>
 
 </manifest>

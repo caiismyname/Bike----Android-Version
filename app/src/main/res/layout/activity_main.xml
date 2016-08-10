@@ -19,6 +19,14 @@
         android:textSize="40sp"/>
 
     <Button
+        android:id="@+id/announcementsButton"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="@string/announcementsButtonLabel"
+        android:onClick="transitionToAnnouncements"/>
+
+    <Button
         android:id="@+id/workoutsButton"
         android:layout_weight="1"
         android:layout_width="match_parent"
