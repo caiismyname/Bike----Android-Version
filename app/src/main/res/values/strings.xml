@@ -33,4 +33,7 @@
     <string name="in">In</string>
     <string name="minutes">minutes.</string>
 
+    <string name="upcomingRidesLabel">Upcoming Rides</string>
+    <string name="upcomingRidesPlaceholder">No upcoming rides</string>
+
 </resources>
