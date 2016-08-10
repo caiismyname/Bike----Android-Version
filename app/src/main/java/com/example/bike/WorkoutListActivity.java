@@ -75,7 +75,7 @@ public class WorkoutListActivity extends AppCompatActivity {
                 Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                 for (DataSnapshot child : children) {
                     workoutClass currentWorkout = child.getValue(workoutClass.class);
-                    currentWorkout.setUsersHaveCompletedList(); // Called to prepare usersHaveCompletedList, b/c parcelable can't pass maps
+                    currentWorkout.setUsersHaveCompletedLists(); // Called to prepare usersHaveCompletedList, b/c parcelable can't pass maps
                     currentWorkout.setWorkoutName(child.getKey().toString());
                     workoutList.add(currentWorkout);
                 }

@@ -42,7 +42,6 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        OneSignal.startInit(this).init();
 
         mCreateButton = (Button)  findViewById(R.id.createAccountButton);
         mFirstNameField = (EditText) findViewById(R.id.firstNameField);

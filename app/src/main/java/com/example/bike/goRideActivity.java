@@ -1,6 +1,9 @@
 package com.example.bike;
 
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +22,7 @@ import com.onesignal.OneSignal;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,6 +63,10 @@ public class goRideActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        //Set Colors
+        mNowButton.setBackgroundColor(Color.MAGENTA);
+        mGoRideSendButton.setBackgroundColor(Color.MAGENTA);
+
     }
 
     public void getTeammates(final List<String> messages, final List<String> times){
@@ -72,12 +80,12 @@ public class goRideActivity extends AppCompatActivity {
                 int maxIndex = (int) dataSnapshot.getChildrenCount();
                 int index = 1;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    if (child.equals(thisUser.userName) == false) {
+                    if (child.getKey().equals(thisUser.userName) == false) {
                         listOfTeammates.add("'" + child.getValue().toString() + "'");
                     }
                     index += 1;
 
-                    if (index == maxIndex) {
+                    if (index > maxIndex) {
                         postNotification(listOfTeammates, messages, times);
                     }
                 }
@@ -93,21 +101,36 @@ public class goRideActivity extends AppCompatActivity {
 
     }
 
+    public void resetButtonColors() {
+        mNowButton.setBackgroundColor(Color.LTGRAY);
+        mTenMinutesButton.setBackgroundColor(Color.LTGRAY);
+        mThrityMinutesButton.setBackgroundColor(Color.LTGRAY);
+        mSixtyMinuteButton.setBackgroundColor(Color.LTGRAY);
+        mAtTimeButton.setBackgroundColor(Color.LTGRAY);
+    }
+
     public void setModifier(View view){
         // Set the modifier var. so when notification is sent,
         // future notifications can be scheduled
+
+        resetButtonColors();
+
         switch(view.getId()){
             case R.id.nowButton:
                 modifier = 0;
+                view.setBackgroundColor(Color.MAGENTA);
                 break;
             case R.id.tenMinutesButton:
                 modifier = 10;
+                view.setBackgroundColor(Color.MAGENTA);
                 break;
             case R.id.thirtyMinutesButton:
                 modifier = 30;
+                view.setBackgroundColor(Color.MAGENTA);
                 break;
             case R.id.sixtyMinutesButton:
                 modifier = 60;
+                view.setBackgroundColor(Color.MAGENTA);
                 break;
             default:
                 break;
@@ -155,6 +178,9 @@ public class goRideActivity extends AppCompatActivity {
         Calendar now = Calendar.getInstance();
         Log.d("now", now.getTime().toString());
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        String isoDate = "";
+
         // Initial notification
         now.add(Calendar.SECOND, 10);
         listOfTimes.add(now.getTime().toString());
@@ -163,6 +189,9 @@ public class goRideActivity extends AppCompatActivity {
         if (modifier.intValue() >= 30){
             now.add(Calendar.MINUTE, modifier);
             listOfTimes.add(now.getTime().toString());
+
+            isoDate = formatter.format(now.getTime());
+
         }
         else if (modifier.intValue() < 0){
             if (atTimeHour.intValue() <= nowHour) {
@@ -171,9 +200,13 @@ public class goRideActivity extends AppCompatActivity {
             now.set(Calendar.HOUR_OF_DAY, atTimeHour);
             now.set(Calendar.MINUTE, atTimeMinute);
             listOfTimes.add(now.getTime().toString());
+
+            isoDate = formatter.format(now.getTime());
+
         }
 
         Log.d("getNotificationTimes", listOfTimes.toString());
+        setAnnouncements(isoDate);
         return listOfTimes;
     }
 
@@ -202,6 +235,13 @@ public class goRideActivity extends AppCompatActivity {
         return messages;
     }
 
+    public void setAnnouncements(String rideTime) {
+        Log.d("goRideActivity", "setAnnoucements");
+        Log.d("setAnnouncements", rideTime);
+        DatabaseReference announcementRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/rides/" + thisUser.fullName + "'s ride");
+        announcementRef.setValue(rideTime);
+    }
+
     public void postNotification(List<String> userIds, List<String> listOfMessages, List<String> listOfNotificationTimes) {
         Integer maxIndex = listOfMessages.size();
         for (Integer index = 0 ; index.intValue() < maxIndex.intValue() ; index += 1) {
@@ -227,8 +267,19 @@ public class goRideActivity extends AppCompatActivity {
 
     public void notificationShell(View view) {
         Log.d("goRideActivity", "notificationShell");
-
         getTeammates(createMessages(), getNotificationTimes());
+
+        // Confirmation Alert
+        AlertDialog confirmationAlert = new AlertDialog.Builder(this).create();
+        confirmationAlert.setTitle("Ride Posted");
+        confirmationAlert.setMessage("Your teammates know you're going on a ride!");
+        confirmationAlert.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        confirmationAlert.show();
 
     }
 

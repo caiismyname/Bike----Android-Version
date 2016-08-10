@@ -65,7 +65,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
 
         // Setting texts
         toolbar.setTitle(mThisWorkout.type);
-        thisUserHasCompleted = mThisWorkout.usersHaveCompletedList.contains(thisUser.userName);
+        thisUserHasCompleted = mThisWorkout.usersHaveCompletedUsernameList.contains(thisUser.userName);
         reloadData();
 
     }
@@ -80,7 +80,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
             workoutRef.removeValue();
         }
         else {
-            workoutRef.setValue(true);
+            workoutRef.setValue(thisUser.fullName);
         }
     }
 
@@ -90,7 +90,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
     }
 
     public void setButtonText() {
-        thisUserHasCompleted = mThisWorkout.usersHaveCompletedList.contains(thisUser.userName);
+        thisUserHasCompleted = mThisWorkout.usersHaveCompletedUsernameList.contains(thisUser.userName);
 
         if (thisUserHasCompleted) {
             completionButton.setText("Incomplete");
@@ -109,7 +109,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mThisWorkout = dataSnapshot.getValue(workoutClass.class);
                 mThisWorkout.setWorkoutName(dataSnapshot.getKey().toString());
-                mThisWorkout.setUsersHaveCompletedList();
+                mThisWorkout.setUsersHaveCompletedLists();
 
                 reloadData();
             }

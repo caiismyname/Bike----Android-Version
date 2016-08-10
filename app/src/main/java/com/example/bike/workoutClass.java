@@ -18,15 +18,16 @@ public class workoutClass implements Parcelable {
     public List<Integer> reps;
     public String type;
     public String unit;
-    public Map<String, Boolean> usersHaveCompleted;
+    public Map<String, String> usersHaveCompleted;
     public List<String> week;
-    public List<String> usersHaveCompletedList = new ArrayList<>();
+    public List<String> usersHaveCompletedUsernameList = new ArrayList<>();
+    public List<String> usersHaveCompletedFullnameList = new ArrayList<>();
 
 
-    public workoutClass(){
+    public workoutClass() {
     }
 
-    public workoutClass(String workoutName, List<Integer> duration, List<Integer> reps, String type, String unit, Map<String, Boolean> usersHaveCompleted, List<String> week){
+    public workoutClass(String workoutName, List<Integer> duration, List<Integer> reps, String type, String unit, Map<String, String> usersHaveCompleted, List<String> week) {
 
         this.workoutName = workoutName;
         this.duration = duration;
@@ -48,7 +49,7 @@ public class workoutClass implements Parcelable {
 
     public String getUsersHaveCompletedString() {
         String finalString = "";
-        for(String user: usersHaveCompletedList){
+        for (String user : usersHaveCompletedFullnameList) {
             finalString += user + "\n";
         }
 
@@ -56,11 +57,11 @@ public class workoutClass implements Parcelable {
     }
 
     public String getWorkoutPayload() {
-        String finalString= "";
+        String finalString = "";
         Integer index = 0;
         Integer maxIndex = this.duration.size();
 
-        while(index < maxIndex) {
+        while (index < maxIndex) {
             finalString += duration.get(index) + " x " + reps.get(index) + "\n";
             index += 1;
         }
@@ -68,7 +69,7 @@ public class workoutClass implements Parcelable {
         return finalString;
     }
 
-    public String getWeekNumber(){
+    public String getWeekNumber() {
         return this.week.get(0);
     }
 
@@ -81,21 +82,20 @@ public class workoutClass implements Parcelable {
     // Is to take the keys (users) from usersHaveCompleted (the map)
     // And transfer them to the corresponding list
     // B/C putParcelable can't do maps
-    public void setUsersHaveCompletedList() {
-        for (String user: this.usersHaveCompleted.keySet()) {
-            if (user.equals("init") == false) {
-                this.usersHaveCompletedList.add(user);
+    public void setUsersHaveCompletedLists() {
+        for (Map.Entry<String, String> user : this.usersHaveCompleted.entrySet()) {
+            if (user.getKey().equals("init") == false) {
+                this.usersHaveCompletedUsernameList.add(user.getKey());
+                this.usersHaveCompletedFullnameList.add(user.getValue());
             }
         }
     }
 
     // Constructing an object out of the FB data directly will not give us the
     // FB key for the data. This manually fixes it.
-    public void setWorkoutName(String workoutName){
+    public void setWorkoutName(String workoutName) {
         this.workoutName = workoutName;
     }
-
-
 
     //
     //
@@ -127,10 +127,16 @@ public class workoutClass implements Parcelable {
             week = null;
         }
         if (in.readByte() == 0x01) {
-            usersHaveCompletedList = new ArrayList<String>();
-            in.readList(usersHaveCompletedList, String.class.getClassLoader());
+            usersHaveCompletedUsernameList = new ArrayList<String>();
+            in.readList(usersHaveCompletedUsernameList, String.class.getClassLoader());
         } else {
-            usersHaveCompletedList = null;
+            usersHaveCompletedUsernameList = null;
+        }
+        if (in.readByte() == 0x01) {
+            usersHaveCompletedFullnameList = new ArrayList<String>();
+            in.readList(usersHaveCompletedFullnameList, String.class.getClassLoader());
+        } else {
+            usersHaveCompletedFullnameList = null;
         }
     }
 
@@ -162,11 +168,17 @@ public class workoutClass implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeList(week);
         }
-        if (usersHaveCompletedList == null) {
+        if (usersHaveCompletedUsernameList == null) {
             dest.writeByte((byte) (0x00));
         } else {
             dest.writeByte((byte) (0x01));
-            dest.writeList(usersHaveCompletedList);
+            dest.writeList(usersHaveCompletedUsernameList);
+        }
+        if (usersHaveCompletedFullnameList == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(usersHaveCompletedFullnameList);
         }
     }
 
@@ -182,6 +194,5 @@ public class workoutClass implements Parcelable {
             return new workoutClass[size];
         }
     };
+
 }
-
-
