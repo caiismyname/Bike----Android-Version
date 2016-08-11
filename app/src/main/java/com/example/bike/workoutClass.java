@@ -56,6 +56,12 @@ public class workoutClass implements Parcelable {
         return finalString;
     }
 
+    public String getNumberHaveCompleted() {
+        Integer number = usersHaveCompletedFullnameList.size();
+        return number.toString();
+    }
+
+
     public String getWorkoutPayload() {
         String finalString = "";
         Integer index = 0;
@@ -66,15 +72,21 @@ public class workoutClass implements Parcelable {
             index += 1;
         }
 
+        finalString += this.unit;
+
         return finalString;
     }
 
     public String getWeekNumber() {
-        return this.week.get(0);
+        return this.week.get(0).toString();
     }
 
     public String getWeekDate() {
         return this.week.get(1);
+    }
+
+    public String getWeekString() {
+        return this.week.get(0).toString() + ": " + this.week.get(1);
     }
 
 

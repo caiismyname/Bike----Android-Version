@@ -33,8 +33,12 @@ public class WorkoutDetailActivity extends AppCompatActivity {
 
     private workoutClass mThisWorkout;
     private DatabaseReference mDatabase;
-    private TextView mPayloadView;
     private Button completionButton;
+    private TextView mWeekNumber;
+    private TextView mWeekDate;
+    private TextView mWorkoutType;
+    private TextView mWorkoutPayload;
+    private TextView mFinishedUsers;
     private Boolean thisUserHasCompleted;
 
 
@@ -49,8 +53,12 @@ public class WorkoutDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_workout_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-        mPayloadView = (TextView) findViewById(R.id.workout_detail_payload_textfield);
         completionButton = (Button) findViewById(R.id.toggleWorkoutCompletionButton);
+        mWeekDate = (TextView) findViewById(R.id.workoutWeekDate);
+        mWeekNumber = (TextView) findViewById(R.id.workoutWeekDate);
+        mWorkoutType = (TextView) findViewById(R.id.workoutType);
+        mWorkoutPayload = (TextView) findViewById(R.id.workoutPayload);
+        mFinishedUsers = (TextView) findViewById(R.id.workoutFinished);
 
 
         // Show the Up button in the action bar.
@@ -86,17 +94,21 @@ public class WorkoutDetailActivity extends AppCompatActivity {
 
     public void reloadData() {
         setButtonText();
-        mPayloadView.setText(mThisWorkout.getUsersHaveCompletedString());
+        mWeekNumber.setText(mThisWorkout.getWeekNumber());
+        mWeekDate.setText(mThisWorkout.getWeekDate());
+        mWorkoutType.setText(mThisWorkout.getType());
+        mWorkoutPayload.setText(mThisWorkout.getWorkoutPayload());
+        mFinishedUsers.setText(mThisWorkout.getUsersHaveCompletedString());
     }
 
     public void setButtonText() {
         thisUserHasCompleted = mThisWorkout.usersHaveCompletedUsernameList.contains(thisUser.userName);
 
         if (thisUserHasCompleted) {
-            completionButton.setText("Incomplete");
+            completionButton.setText("Mark as Incomplete");
         }
         else {
-            completionButton.setText("Complete");
+            completionButton.setText("Mark as Complete");
         }
     }
 

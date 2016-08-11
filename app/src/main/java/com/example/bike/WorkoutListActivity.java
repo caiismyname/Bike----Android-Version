@@ -61,7 +61,6 @@ public class WorkoutListActivity extends AppCompatActivity {
         assert recyclerView != null;
         RecyclerView.Adapter mAdapter = new SimpleItemRecyclerViewAdapter(initWorkoutList);
         recyclerView.setAdapter(mAdapter);
-
     }
 
     public List<workoutClass> getWorkoutsList() {
@@ -93,8 +92,6 @@ public class WorkoutListActivity extends AppCompatActivity {
         return workoutList;
     }
 
-
-
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
@@ -117,8 +114,9 @@ public class WorkoutListActivity extends AppCompatActivity {
             Log.d("WorkoutListActivity", "onbindViewHolder");
 
             //holder.mItem = mValues.get(position).getWorkoutName();
-            holder.mIdView.setText(mValues.get(position).getWeekDate());
-            holder.mContentView.setText(mValues.get(position).getType());
+            holder.mWeekTextView.setText(mValues.get(position).getWeekString());
+            holder.mTypeTextView.setText(mValues.get(position).getType());
+            holder.mNumberWhoCompletedNumberTextView.setText(mValues.get(position).getNumberHaveCompleted());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -148,20 +146,22 @@ public class WorkoutListActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
+            public final TextView mWeekTextView;
+            public final TextView mTypeTextView;
+            public final TextView mNumberWhoCompletedNumberTextView;
             public String mItem;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mWeekTextView = (TextView) view.findViewById(R.id.workoutListWeek);
+                mTypeTextView = (TextView) view.findViewById(R.id.workoutListType);
+                mNumberWhoCompletedNumberTextView = (TextView) view.findViewById(R.id.numberWhoCompletedNumber);
             }
 
             @Override
             public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
+                return super.toString() + " '" + mWeekTextView.getText() + "'";
             }
         }
     }

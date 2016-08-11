@@ -21,6 +21,11 @@
 
     <string name="workoutCompleteButton">Complete</string>
     <string name="workoutIncompleteButton">Incomplete</string>
+    <string name="workoutWeek">WEEK</string>
+    <string name="workoutType">TYPE</string>
+    <string name="workoutPayload">WORKOUT</string>
+    <string name="workoutFinished">FINISHED</string>
+    <string name="numberWhoCompleted"># who completed</string>
 
     <string name="action_settings">Settings</string>
 
