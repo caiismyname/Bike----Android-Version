@@ -23,9 +23,7 @@ public class workoutClass implements Parcelable {
     public List<String> usersHaveCompletedUsernameList = new ArrayList<>();
     public List<String> usersHaveCompletedFullnameList = new ArrayList<>();
 
-
-    public workoutClass() {
-    }
+    public workoutClass() {}
 
     public workoutClass(String workoutName, List<Integer> duration, List<Integer> reps, String type, String unit, Map<String, String> usersHaveCompleted, List<String> week) {
 

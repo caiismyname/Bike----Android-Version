@@ -5,7 +5,6 @@
     tools:context="com.example.bike.announcementsActivity"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-
     <LinearLayout
         android:id="@+id/activity_announcements"
         android:layout_width="match_parent"

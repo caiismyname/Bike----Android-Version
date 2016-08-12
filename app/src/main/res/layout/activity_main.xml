@@ -27,19 +27,20 @@
         android:onClick="transitionToAnnouncements"/>
 
     <Button
+        android:id="@+id/bikesButton"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="@string/bikesButtonLabel"
+        android:onClick="transitionToBikeList"/>
+
+    <Button
         android:id="@+id/workoutsButton"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:text="@string/workoutsButtonLabel"
         android:onClick="transitionToWorkouts"/>
-
-    <Button
-        android:id="@+id/bikesButton"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:text="@string/bikesButtonLabel"/>
 
     <Button
         android:id="@+id/goRideButton"

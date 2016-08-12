@@ -79,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(transitionToAnnouncements);
     }
 
+    public void transitionToBikeList(View view) {
+        Intent transitionToBikeList = new Intent(this, bikeListActivity.class);
+        startActivity(transitionToBikeList);
+    }
+
     public void transitionToWorkouts(View view) {
         Intent transitionToWorkouts = new Intent(this, WorkoutListActivity.class);
         startActivity(transitionToWorkouts);

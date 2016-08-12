@@ -41,4 +41,7 @@
     <string name="upcomingRidesLabel">Upcoming Rides</string>
     <string name="upcomingRidesPlaceholder">No upcoming rides</string>
 
+    <string name="ridersLabel">Riders: </string>
+    <string name="ridersPlaceholder">No Riders</string>
+
 </resources>

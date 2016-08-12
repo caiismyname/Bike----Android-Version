@@ -39,7 +39,6 @@ import java.util.List;
  */
 public class WorkoutListActivity extends AppCompatActivity {
 
-
     private List<workoutClass> initWorkoutList = new ArrayList<>();
     private RecyclerView recyclerView; // Is defined here to allow access to it's adapter in the getWorkoutsList method
     private DatabaseReference mDatabase;
@@ -134,7 +133,6 @@ public class WorkoutListActivity extends AppCompatActivity {
                     intent.putExtras(b);
 
                     context.startActivity(intent);
-
                 }
             });
         }
