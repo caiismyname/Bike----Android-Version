@@ -51,7 +51,11 @@ public class bikeClass {
         for (String rider : ridersFullnames) {
             finalString += rider +", ";
         }
-        return finalString;
+        if (finalString.equals("") == true) {
+            return "No Riders";
+        } else {
+            return finalString;
+        }
     }
 
     public String getSize() {return "(" + this.size + ")";}
