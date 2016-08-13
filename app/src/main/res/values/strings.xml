@@ -43,5 +43,8 @@
 
     <string name="ridersLabel">Riders: </string>
     <string name="ridersPlaceholder">No Riders</string>
+    <string name="statusReady">Ready</string>
+    <string name="statusInUse">In Use</string>
+    <string name="statusUnusable">Unusable</string>
 
 </resources>

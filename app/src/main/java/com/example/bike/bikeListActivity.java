@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.text.Text;
@@ -110,12 +111,64 @@ public class bikeListActivity extends AppCompatActivity {
                 // Set the bike in the local userClass
                 thisUser.bikeName = bikeName;
             }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                // Do nothing
-            }
-        }).show();
+        }).setNegativeButton("Cancel", null).show();
+    }
+
+    public void changeBikeStatusHelper(String bikeNameInput, String status) {
+        DatabaseReference bikeStatusRef = mDatabase.child("colleges/" + thisUser.college + "/bikeList/" + bikeNameInput + "/status");
+        bikeStatusRef.setValue(status);
+        getBikeList();
+    }
+
+    public void changeBikeStatus(final bikeClass currentBike) {
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Change Status").setMessage("Change the status of " + currentBike.getBikeName()).setNeutralButton("Cancel", null).setCancelable(true);
+        switch (currentBike.status) {
+            case "Ready":
+                alert.setNegativeButton("In Use", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changeBikeStatusHelper(currentBike.bikeUserName, "In Use");
+                    }
+                }).setPositiveButton("Unusable", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changeBikeStatusHelper(currentBike.bikeUserName, "Unusable");
+                    }
+                });
+                break;
+            case "In Use":
+                alert.setNegativeButton("Ready", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changeBikeStatusHelper(currentBike.bikeUserName, "Ready");
+                    }
+                }).setPositiveButton("Unusable", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changeBikeStatusHelper(currentBike.bikeUserName, "Unusable");
+                    }
+                });
+                break;
+            case "Unusable":
+                alert.setNegativeButton("Ready", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changeBikeStatusHelper(currentBike.bikeUserName, "Ready");
+                    }
+                }).setPositiveButton("In Use", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        changeBikeStatusHelper(currentBike.bikeUserName, "In Use");
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+
+        alert.show();
     }
 
     public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapter.bikeViewHolder>{
@@ -190,7 +243,13 @@ public class bikeListActivity extends AppCompatActivity {
                 }
             });
 
-            
+            bvh.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("bikeList", "onClick");
+                    changeBikeStatus(currentBike);
+                }
+            });
         }
 
         @Override
