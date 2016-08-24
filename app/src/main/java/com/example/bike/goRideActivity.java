@@ -241,18 +241,20 @@ public class goRideActivity extends AppCompatActivity {
     }
 
     public void setAnnouncements(String rideTime) {
-        Log.d("goRideActivity", "setAnnoucements");
+        Log.d("goRideActivity", "setAnnouncements");
         Log.d("setAnnouncements", rideTime);
-        DatabaseReference announcementRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/rides/" + thisUser.fullName + "'s ride");
-        announcementRef.setValue(rideTime);
+        DatabaseReference announcementRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/" + thisUser.fullName + "'s ride");
+        announcementRef.child("type").setValue("ride");
+        announcementRef.child("rideTime").setValue(rideTime);
+        announcementRef.child("hostOneSignalUserId").setValue(thisUser.oneSignalUserId);
+        announcementRef.child("riders/init").setValue("foo");
     }
 
     public void postNotification(List<String> userIds, List<String> listOfMessages, List<String> listOfNotificationTimes) {
         if (modifier.equals(0) || modifier.equals(10)) {
             try {
                 Log.d("goRideActivity", "posting immediate notification");
-                Log.d("asdfasdf", "asdf " + userIds.toString());
-                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + listOfMessages.get(0) + " '}, 'include_player_ids': " + userIds.toString() + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'goingOnRide'}}"),
+                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + listOfMessages.get(0) + " '}, 'include_player_ids': " + userIds.toString() + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'goingOnRide', 'rideName': 'noentry'}}"),
                         new OneSignal.PostNotificationResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject response) {
@@ -272,7 +274,7 @@ public class goRideActivity extends AppCompatActivity {
             for (Integer index = 0; index.intValue() < maxIndex.intValue(); index += 1) {
                 try {
                     Log.d("goRideActivity", "posting delayed notifications");
-                    OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + listOfMessages.get(index) + " '}, 'include_player_ids': " + userIds.toString() + ", 'send_after': '" + listOfNotificationTimes.get(index) + "', 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'goingOnRide'}}"),
+                    OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + listOfMessages.get(index) + " '}, 'include_player_ids': " + userIds.toString() + ", 'send_after': '" + listOfNotificationTimes.get(index) + "', 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'goingOnRide', 'rideName': \"" + thisUser.fullName + "\'s ride\"}}"),
                             new OneSignal.PostNotificationResponseHandler() {
                                 @Override
                                 public void onSuccess(JSONObject response) {

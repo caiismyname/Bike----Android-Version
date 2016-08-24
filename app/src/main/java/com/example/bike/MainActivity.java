@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void transitionToAnnouncements(View view){
-        Intent transitionToAnnouncements = new Intent(this, announcementsActivity.class);
+        Intent transitionToAnnouncements = new Intent(this, announcementsCardViewActivity.class);
         startActivity(transitionToAnnouncements);
     }
 

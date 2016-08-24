@@ -53,8 +53,8 @@
                 android:value="com.example.bike.WorkoutListActivity" />
         </activity>
         <activity android:name=".goRideActivity" />
-        <activity android:name=".announcementsActivity" />
-        <activity android:name=".bikeListActivity"></activity>
+        <activity android:name=".bikeListActivity" />
+        <activity android:name=".announcementsCardViewActivity"></activity>
     </application>
 
 </manifest>
