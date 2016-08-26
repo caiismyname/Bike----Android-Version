@@ -119,13 +119,12 @@ public class announcementClass {
     }
 
     public String getRidePayload() {
-        String payload = this.announcementTitle + ": " + this.formattedTime + "\n";
+        String payload = this.formattedTime + "\n";
         if (this.ridersFullname.size() > 0){
             payload += "Joined: ";
             for (String rider : this.ridersFullname) {
                 payload += rider + ", ";
             }
-            payload += "\n \n";
         }
 
         return payload;
@@ -151,7 +150,7 @@ public class announcementClass {
         }
         // Update FBDB
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference rideRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/" + this.announcementTitle + "riders/" + thisUser.userName);
+        DatabaseReference rideRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/" + this.announcementTitle + "/riders/" + thisUser.userName);
         rideRef.setValue(thisUser.fullName);
 
     }
