@@ -131,28 +131,57 @@ public class announcementClass {
     }
 
     public void joinRide() {
-        // Notify host
-        try {
-            OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + thisUser.fullName + " joined your ride! '}, 'include_player_ids': " + this.hostOneSignalUserId + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'rideJoined'}}"),
-                    new OneSignal.PostNotificationResponseHandler() {
-                        @Override
-                        public void onSuccess(JSONObject response) {
-                            Log.i("OneSignalExample", "postNotification Success: " + response.toString());
-                        }
+        // Make sure you don't add yourself to your own ride
+        if (this.hostOneSignalUserId.equals(thisUser.oneSignalUserId) == false) {
+            // Notify host
+            try {
+                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + thisUser.fullName + " joined your ride! '}, 'include_player_ids': " + this.hostOneSignalUserId + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'rideJoined'}}"),
+                        new OneSignal.PostNotificationResponseHandler() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+                                Log.i("OneSignalExample", "postNotification Success: " + response.toString());
+                            }
 
-                        @Override
-                        public void onFailure(JSONObject response) {
-                            Log.e("OneSignalExample", "postNotification Failure: " + response.toString());
-                        }
-                    });
-        } catch (JSONException e) {
-            e.printStackTrace();
+                            @Override
+                            public void onFailure(JSONObject response) {
+                                Log.e("OneSignalExample", "postNotification Failure: " + response.toString());
+                            }
+                        });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            // Update FBDB
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference rideRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/" + this.announcementTitle + "/riders/" + thisUser.userName);
+            rideRef.setValue(thisUser.fullName);
         }
-        // Update FBDB
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference rideRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/" + this.announcementTitle + "/riders/" + thisUser.userName);
-        rideRef.setValue(thisUser.fullName);
+    }
 
+    public void leaveRide() {
+
+        if (this.hostOneSignalUserId.equals(thisUser.oneSignalUserId) == false) {
+            // Notify host
+            try {
+                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + thisUser.fullName + " left your ride! '}, 'include_player_ids': " + this.hostOneSignalUserId + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'rideJoined'}}"),
+                        new OneSignal.PostNotificationResponseHandler() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+                                Log.i("OneSignalExample", "postNotification Success: " + response.toString());
+                            }
+
+                            @Override
+                            public void onFailure(JSONObject response) {
+                                Log.e("OneSignalExample", "postNotification Failure: " + response.toString());
+                            }
+                        });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            // Update FBDB
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference rideRef = mDatabase.child("colleges/" + thisUser.college + "/announcements/" + this.announcementTitle + "/riders/" + thisUser.userName);
+            rideRef.removeValue();
+        }
     }
 
     // General "get shit"

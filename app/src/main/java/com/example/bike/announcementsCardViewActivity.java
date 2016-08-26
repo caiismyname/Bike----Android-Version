@@ -96,7 +96,7 @@ public class announcementsCardViewActivity extends AppCompatActivity {
             }
         };
 
-        announcementsRef.addValueEventListener(announcementsListener);
+        announcementsRef.addListenerForSingleValueEvent(announcementsListener);
     }
 
     public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapter.announcementViewHolder>{
@@ -139,15 +139,35 @@ public class announcementsCardViewActivity extends AppCompatActivity {
             avh.announcementTitle.setText(announcements.get(i).getAnnouncementTitle());
             avh.announcementPayload.setText(announcements.get(i).getPayload());
 
+            if (thisAnnouncement.getAnnouncementType().equals("ride") == true) {
+                avh.announcementTitle.setTextColor(0xff014181);
+            }
+
             avh.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d("AnnouncementsCardView", "onClick");
-                    if (thisAnnouncement.getAnnouncementType().equals("ride")) {
+                    if (thisAnnouncement.getAnnouncementType().equals("ride") == true) {
                         thisAnnouncement.joinRide();
                     }
+
+                    getAnnouncements();
                 }
             });
+
+            avh.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Log.d("AnnouncementsCardView", "onLongClick");
+                    if (thisAnnouncement.getAnnouncementType().equals("ride") == true) {
+                        thisAnnouncement.leaveRide();
+                    }
+
+                    getAnnouncements();
+                    return true;
+                }
+            });
+
         }
 
         @Override
