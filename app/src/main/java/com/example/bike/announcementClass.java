@@ -48,7 +48,7 @@ public class announcementClass {
         return this.announcementTitle;
     }
 
-    // Initalizer and helper functions for general messages
+    // Initializer and helper functions for general messages
     public void initGeneralVars(String message){
         this.announcementMessage = message;
     }
@@ -57,15 +57,12 @@ public class announcementClass {
         return this.announcementMessage;
     }
 
-    // Initalizer and helper functions for ride announcements
+    // Initializer and helper functions for ride announcements
     public void initRideVars(String rideTime, String hostOneSignalUserId, Map<String, String>riders){
         this.rideTime = rideTime;
         this.hostOneSignalUserId = hostOneSignalUserId;
         this.riders = riders;
-        setOtherRideVars();
-    }
 
-    public void setOtherRideVars() {
         formatTime();
         getRiderLists();
     }
@@ -125,6 +122,8 @@ public class announcementClass {
             for (String rider : this.ridersFullname) {
                 payload += rider + ", ";
             }
+        } else {
+            payload += "No one has joined this ride yet";
         }
 
         return payload;
@@ -135,7 +134,7 @@ public class announcementClass {
         if (this.hostOneSignalUserId.equals(thisUser.oneSignalUserId) == false) {
             // Notify host
             try {
-                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + thisUser.fullName + " joined your ride! '}, 'include_player_ids': " + this.hostOneSignalUserId + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'rideJoined'}}"),
+                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + thisUser.fullName + " joined your ride! '}, 'include_player_ids': [" + this.hostOneSignalUserId + "], 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'rideJoined'}}"),
                         new OneSignal.PostNotificationResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject response) {
@@ -162,7 +161,7 @@ public class announcementClass {
         if (this.hostOneSignalUserId.equals(thisUser.oneSignalUserId) == false) {
             // Notify host
             try {
-                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + thisUser.fullName + " left your ride! '}, 'include_player_ids': " + this.hostOneSignalUserId + ", 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'rideJoined'}}"),
+                OneSignal.postNotification(new JSONObject("{'contents': {'en': '" + thisUser.fullName + " left your ride! '}, 'include_player_ids': [" + this.hostOneSignalUserId + "], 'data' : {'senderOneSignalUserId': '" + thisUser.oneSignalUserId + "', 'notificationType': 'rideJoined'}}"),
                         new OneSignal.PostNotificationResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject response) {

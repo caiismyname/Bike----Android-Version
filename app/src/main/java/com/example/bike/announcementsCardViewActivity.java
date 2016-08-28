@@ -52,11 +52,11 @@ public class announcementsCardViewActivity extends AppCompatActivity {
     public void getAnnouncements() {
         Log.d("AnnouncementsCardView", "getAnnouncements");
         final DatabaseReference announcementsRef =  mDatabase.child("colleges/" + thisUser.college + "/announcements/");
-        final List<announcementClass> tempAnnouncementsList = new ArrayList<>();
 
         ValueEventListener announcementsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<announcementClass> tempAnnouncementsList = new ArrayList<>();
                 for (DataSnapshot announcement : dataSnapshot.getChildren()) {
                     String announcementTitle = announcement.getKey().toString();
                     if (announcementTitle.equals("init") == false) {
@@ -70,20 +70,19 @@ public class announcementsCardViewActivity extends AppCompatActivity {
                             Map<String, String> riders = (Map<String, String>) announcement.child("riders").getValue();
                             currentAnnouncement.initRideVars(rideTime, hostOneSignalUserid, riders);
 
-                        } else {
-                            String message = announcement.child("message").getValue().toString();
-                            currentAnnouncement.initGeneralVars(message);
-                        }
-                        // If ride has passed, remove it
-                        if (currentAnnouncement.getAnnouncementType().equals("ride")) {
                             if (currentAnnouncement.hasRidePassed()) {
                                 announcementsRef.child(announcementTitle).removeValue();
                             } else {
                                 tempAnnouncementsList.add(currentAnnouncement);
                                 rva.updateData(tempAnnouncementsList);
                             }
+
                         } else {
+                            String message = announcement.child("message").getValue().toString();
+                            currentAnnouncement.initGeneralVars(message);
+
                             tempAnnouncementsList.add(currentAnnouncement);
+                            Log.d("tempannouncementsLIst", tempAnnouncementsList.toString());
                             rva.updateData(tempAnnouncementsList);
                         }
                     }
@@ -96,7 +95,7 @@ public class announcementsCardViewActivity extends AppCompatActivity {
             }
         };
 
-        announcementsRef.addListenerForSingleValueEvent(announcementsListener);
+        announcementsRef.addValueEventListener(announcementsListener);
     }
 
     public class recyclerViewAdapter extends RecyclerView.Adapter<recyclerViewAdapter.announcementViewHolder>{
@@ -150,8 +149,6 @@ public class announcementsCardViewActivity extends AppCompatActivity {
                     if (thisAnnouncement.getAnnouncementType().equals("ride") == true) {
                         thisAnnouncement.joinRide();
                     }
-
-                    getAnnouncements();
                 }
             });
 
@@ -162,8 +159,6 @@ public class announcementsCardViewActivity extends AppCompatActivity {
                     if (thisAnnouncement.getAnnouncementType().equals("ride") == true) {
                         thisAnnouncement.leaveRide();
                     }
-
-                    getAnnouncements();
                     return true;
                 }
             });

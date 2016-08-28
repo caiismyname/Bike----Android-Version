@@ -40,7 +40,7 @@ public class BikeApplication extends Application {
         @Override
         public void notificationOpened(OSNotificationOpenResult result) {
 
-            OSNotificationAction.ActionType actionType = result.action.actionType;
+            //OSNotificationAction.ActionType actionType = result.action.actionType;
             JSONObject data = result.notification.payload.additionalData;
 
             String messageTitle;
